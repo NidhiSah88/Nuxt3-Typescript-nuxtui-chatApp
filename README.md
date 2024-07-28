@@ -1,4 +1,7 @@
-#nuxt 
+# project installation
+# yarn add moment socket.io socket.io-client
+# yarn add @nuxt/ui
+# to run app:  yarn dev
 
 
 # Nuxt 3 Minimal Starter
