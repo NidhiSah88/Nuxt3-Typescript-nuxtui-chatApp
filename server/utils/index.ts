@@ -56,6 +56,15 @@ export function initSocket(event: H3Event) {
 
         })
 
+          // Handle Delete Message
+          socket.on('deleteMessage', (messageId: string) => {
+            const user = getCurrentUser(socket.id);
+            if (user) {
+                io.to(user.room).emit('deleteMessage', messageId);
+            }
+        });
+
+
         // Disconeect
         socket.on('disconnect', () => {
 
@@ -77,9 +86,11 @@ export function initSocket(event: H3Event) {
 
 }
 
-export function formnatMessage(username: string, text: string) {
+export function formnatMessage(username: string, text: string, id?: string) {
 
     return {
+        id: id || `${Date.now()}-${Math.random()}`, // unique ID for each message
+       
         username,
         text,
         time: moment().format('h:mm a')

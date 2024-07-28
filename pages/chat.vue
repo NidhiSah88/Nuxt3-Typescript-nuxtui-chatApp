@@ -78,10 +78,13 @@
             <div class="flex items-center gap-x-3">
               <div class="text-xs text-primary font-semibold">{{ chat.username }}</div>
               <div class="text-xs">{{ chat.time }}</div>
+              <button v-if="chat.username === route.query.username" @click="deleteMessage(chat.id)" class="text-red-500 hover:text-red-700 text-xs">
+                Delete
+              </button>
             </div>
             <div class="mt-1 text-base">
               {{ chat.text }}
-            </div>
+            </div>  
           </div>
         </div>
       </div>
@@ -139,6 +142,12 @@ const sendMessage = async () => {
     await nextTick(() => message.value = '');
 };
 
+// Function to delete a chat message
+const deleteMessage = (messageId: string) => {
+  socket.value?.emit('deleteMessage', messageId);
+};
+
+
 onMounted(() => {
   const { username, room } = route.query as Partial<Chat>;
   if (!username || !room) {
@@ -153,6 +162,11 @@ socket.value.emit('joinRom', { username, room })
 socket.value.on('message', (response: Chat) => {
     chats.value.push(response)
 })
+
+  socket.value.on('deleteMessage', (messageId: string) => {
+    chats.value = chats.value.filter(chat => chat.id !== messageId);
+  });
+
 
 socket.value.on('roomUsers', (response: { room: string, users: User[] }) => {
 
